@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JDK25'
-        maven 'Maven3'
+        jdk 'Java25' // Matches the Name configured in your Jenkins Tools setting
     }
 
     environment {
@@ -12,7 +11,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -21,17 +19,19 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'mvn -B clean verify'
+                // Changed from 'sh' to 'bat' for Windows execution
+                bat 'mvn -B clean verify'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                        -Dsonar.projectKey=lendlogic \
-                        -Dsonar.projectName=LendLogic \
+                // Matches the name you saved for SonarQube under credentials/server link
+                withSonarQubeEnv('SonarQubeServer') {
+                    bat '''
+                        mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar ^
+                        -Dsonar.projectKey=lendlogic ^
+                        -Dsonar.projectName=LendLogic ^
                         -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }
@@ -48,7 +48,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
             }
         }
     }
