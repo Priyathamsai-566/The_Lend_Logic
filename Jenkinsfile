@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     tools {
-        jdk 'Java25' // Matches the Name configured in your Jenkins Tools setting
+        jdk 'Java25'
+        maven 'Maven3' // Matches the Name configured in your Jenkins Tools setting
     }
 
     environment {
