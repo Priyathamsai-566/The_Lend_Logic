@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         jdk 'Java21'
-        maven 'Maven3' // Matches the Name configured in your Jenkins Tools setting
+        maven 'Maven3'
     }
 
     environment {
@@ -20,14 +20,12 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                // Changed from 'sh' to 'bat' for Windows execution
                 bat 'mvn -B clean verify'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                // Matches the name you saved for SonarQube under credentials/server link
                 withSonarQubeEnv('SonarQubeServer') {
                     bat '''
                         mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar ^
@@ -47,9 +45,14 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Build & Deploy') {
             steps {
-                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+                // Routes the execution context into your native WSL Linux Docker Engine
+                // We use standard Linux syntax (like '|| true') because it executes inside WSL
+                bat 'wsl docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+                bat 'wsl docker stop lendlogic-running || true'
+                bat 'wsl docker rm lendlogic-running || true'
+                bat 'wsl docker run -d -p 8081:8081 --name lendlogic-running %IMAGE_NAME%:%IMAGE_TAG%'
             }
         }
     }
