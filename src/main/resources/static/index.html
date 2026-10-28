@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LendLogic | Smart Loan Planning</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="brand">
+        <div class="brand-icon">L</div>
+        <span>LendLogic</span>
+    </div>
+    <p>Smart loan recommendations, made simple.</p>
+</header>
+
+<main class="page-container">
+
+    <section class="hero">
+        <div>
+            <span class="eyebrow">FINANCIAL PLANNING PLATFORM</span>
+            <h1>Find the loan that fits your financial profile.</h1>
+            <p>
+                Receive personalized loan-scheme suggestions, estimate your monthly EMI,
+                and explore a complete repayment schedule.
+            </p>
+        </div>
+
+        <div class="hero-stat">
+            <span>Simple. Clear. Personal.</span>
+            <strong>Better borrowing starts here.</strong>
+        </div>
+    </section>
+
+    <section class="tabs">
+        <button class="tab-button active" data-tab="finder">
+            Smart Loan Finder
+        </button>
+
+        <button class="tab-button" data-tab="schedule">
+            Amortization Schedule
+        </button>
+    </section>
+
+    <section id="finder" class="tab-content active">
+        <div class="content-grid">
+
+            <div class="card form-card">
+                <div class="card-heading">
+                    <span class="step-number">01</span>
+
+                    <div>
+                        <h2>Tell us about your finances</h2>
+                        <p>
+                            We use these details to identify suitable loan schemes.
+                        </p>
+                    </div>
+                </div>
+
+                <form id="loan-form">
+
+                    <div class="form-grid">
+
+                        <div class="input-group">
+                            <label for="purpose">Loan purpose</label>
+
+                            <select id="purpose" required>
+                                <option value="HOME">Buying a home</option>
+                                <option value="CAR">Buying a car</option>
+                                <option value="EDUCATION">Education</option>
+                                <option value="DEBT">Debt consolidation</option>
+                                <option value="BUSINESS">Business expansion</option>
+                                <option value="PERSONAL">Personal expenses</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="income">Monthly income (₹)</label>
+
+                            <input
+                                id="income"
+                                type="number"
+                                min="1"
+                                value="75000"
+                                required
+                            >
+                        </div>
+
+                        <div class="input-group">
+                            <label for="debt">Existing monthly debt (₹)</label>
+
+                            <input
+                                id="debt"
+                                type="number"
+                                min="0"
+                                value="5000"
+                                required
+                            >
+                        </div>
+
+                        <div class="input-group">
+                            <label for="loanAmount">Required loan amount (₹)</label>
+
+                            <input
+                                id="loanAmount"
+                                type="number"
+                                min="1"
+                                value="1000000"
+                                required
+                            >
+                        </div>
+
+                        <div class="input-group full-width">
+                            <label for="tenure">
+                                Preferred repayment tenure (years)
+                            </label>
+
+                            <input
+                                id="tenure"
+                                type="number"
+                                min="1"
+                                max="30"
+                                value="10"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+                    <button class="primary-button" type="submit">
+                        Get my recommendations
+                        <span>→</span>
+                    </button>
+
+                </form>
+            </div>
+
+            <div id="empty-state" class="card empty-state">
+                <div class="empty-icon">₹</div>
+
+                <h2>Your loan schemes will appear here.</h2>
+
+                <p>
+                    Enter your financial information and let LendLogic analyze
+                    your borrowing capacity.
+                </p>
+            </div>
+
+            <div id="recommendation-card" class="card recommendation-card hidden">
+
+                <div class="card-heading">
+                    <span class="step-number">02</span>
+
+                    <div>
+                        <h2>Your loan recommendations</h2>
+
+                        <p>
+                            Based on your income, debt, loan purpose, and requested amount.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="product-highlight">
+                    <span>BEST MATCH</span>
+                    <h3 id="product-name"></h3>
+                    <div id="status-badge" class="status-badge"></div>
+                </div>
+
+                <div class="metrics">
+
+                    <div class="metric">
+                        <span>Estimated EMI</span>
+                        <strong id="emi"></strong>
+                    </div>
+
+                    <div class="metric">
+                        <span>Interest rate</span>
+                        <strong id="interest-rate"></strong>
+                    </div>
+
+                    <div class="metric">
+                        <span>DTI ratio</span>
+                        <strong id="dti"></strong>
+                    </div>
+
+                    <div class="metric">
+                        <span>Approved tenure</span>
+                        <strong id="approved-tenure"></strong>
+                    </div>
+
+                </div>
+
+                <p id="recommendation-message" class="recommendation-message"></p>
+
+                <div class="scheme-section">
+                    <h3>Other suitable schemes</h3>
+                    <div id="scheme-list" class="scheme-list"></div>
+                </div>
+
+                <button id="schedule-button" class="secondary-button">
+                    Simulate amortization schedule
+                </button>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section id="schedule" class="tab-content">
+
+        <div class="card schedule-card">
+
+            <div class="schedule-header">
+
+                <div>
+                    <span class="eyebrow">REPAYMENT BREAKDOWN</span>
+                    <h2>Interactive Amortization Schedule</h2>
+
+                    <p>
+                        See how every repayment is divided between principal and interest.
+                    </p>
+                </div>
+
+                <div id="schedule-summary" class="schedule-summary hidden"></div>
+
+            </div>
+
+            <div id="schedule-empty" class="table-empty">
+                <p>
+                    Generate a loan recommendation first to view your repayment schedule.
+                </p>
+            </div>
+
+            <div id="table-wrapper" class="table-wrapper hidden">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>EMI</th>
+                            <th>Principal Paid</th>
+                            <th>Interest Paid</th>
+                            <th>Balance Remaining</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="schedule-body"></tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    LendLogic is an educational financial-planning project.
+    Loan eligibility, rates, and terms must be confirmed with a financial institution.
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
