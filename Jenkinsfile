@@ -47,12 +47,15 @@ pipeline {
 
         stage('Docker Build & Deploy') {
             steps {
-                // Routes the execution context into your native WSL Linux Docker Engine
-                // We use standard Linux syntax (like '|| true') because it executes inside WSL
-                bat 'wsl docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
-                bat 'wsl docker stop lendlogic-running || true'
-                bat 'wsl docker rm lendlogic-running || true'
-                bat 'wsl docker run -d -p 8082:8082 --name lendlogic-running %IMAGE_NAME%:%IMAGE_TAG%'
+                // Using double quotes allows Jenkins to inject your environment variables natively
+                bat "wsl docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
+                
+                // Wrapping the commands inside 'wsl bash -c' passes the fallback '|| true' safely into Linux
+                bat "wsl bash -c 'docker stop lendlogic-running || true'"
+                bat "wsl bash -c 'docker rm lendlogic-running || true'"
+                
+                // Launch the fresh multi-stage container build targeting port 8082
+                bat "wsl docker run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
             }
         }
     }
