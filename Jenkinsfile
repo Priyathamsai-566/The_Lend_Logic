@@ -52,7 +52,7 @@ pipeline {
                 bat 'wsl docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
                 bat 'wsl docker stop lendlogic-running || true'
                 bat 'wsl docker rm lendlogic-running || true'
-                bat 'wsl docker run -d -p 8081:8081 --name lendlogic-running %IMAGE_NAME%:%IMAGE_TAG%'
+                bat 'wsl docker run -d -p 8082:8082 --name lendlogic-running %IMAGE_NAME%:%IMAGE_TAG%'
             }
         }
     }
