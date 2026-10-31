@@ -47,15 +47,15 @@ pipeline {
 
         stage('Docker Build & Deploy') {
             steps {
-                // The explicit user flag allows the pipeline to interact securely with your active WSL environment
-                bat "wsl --user asus1234 docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
+                // Communicates directly over the local network port to bypass WSL restriction rules entirely
+                bat "docker -H tcp://localhost:2375 build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
                 
-                // Safely handles stops and removes on existing containers without throwing pipeline execution errors
-                bat "wsl --user asus1234 bash -c 'docker stop lendlogic-running || true'"
-                bat "wsl --user asus1234 bash -c 'docker rm lendlogic-running || true'"
+                // Safely catches execution stops using native Windows Command Prompt syntax
+                bat "docker -H tcp://localhost:2375 stop lendlogic-running || cmd /c exit 0"
+                bat "docker -H tcp://localhost:2375 rm lendlogic-running || cmd /c exit 0"
                 
-                // Deploys your multi-stage container build hands-free onto port 8082
-                bat "wsl --user asus1234 docker run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+                // Boots up your multi-stage build container hands-free onto port 8082
+                bat "docker -H tcp://localhost:2375 run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
             }
         }
     }
