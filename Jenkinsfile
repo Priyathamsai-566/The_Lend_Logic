@@ -47,15 +47,15 @@ pipeline {
 
         stage('Docker Build & Deploy') {
             steps {
-                // Communicates directly over the local network port to bypass WSL restriction rules entirely
-                bat "docker -H tcp://localhost:2375 build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
+                // Compile the production-ready multi-stage image inside your WSL subsystem
+                bat "wsl docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
                 
-                // Safely catches execution stops using native Windows Command Prompt syntax
-                bat "docker -H tcp://localhost:2375 stop lendlogic-running || cmd /c exit 0"
-                bat "docker -H tcp://localhost:2375 rm lendlogic-running || cmd /c exit 0"
+                // Gracefully tear down previous running iterations of your application container
+                bat "wsl bash -c 'docker stop lendlogic-running || true'"
+                bat "wsl bash -c 'docker rm lendlogic-running || true'"
                 
-                // Boots up your multi-stage build container hands-free onto port 8082
-                bat "docker -H tcp://localhost:2375 run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+                // Boot your compiled web application onto production-ready port 8082 hands-free
+                bat "wsl docker run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
             }
         }
     }
