@@ -47,15 +47,15 @@ pipeline {
 
         stage('Docker Build & Deploy') {
             steps {
-                // Route execution through PowerShell specifying your active WSL user profile context
-                powershell "wsl --user asus1234 docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
+                // The explicit user flag allows the pipeline to interact securely with your active WSL environment
+                bat "wsl --user asus1234 docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
                 
-                // Route commands safely into your Ubuntu shell environment to handle the fallback catch
-                powershell "wsl --user asus1234 bash -c 'docker stop lendlogic-running || true'"
-                powershell "wsl --user asus1234 bash -c 'docker rm lendlogic-running || true'"
+                // Safely handles stops and removes on existing containers without throwing pipeline execution errors
+                bat "wsl --user asus1234 bash -c 'docker stop lendlogic-running || true'"
+                bat "wsl --user asus1234 bash -c 'docker rm lendlogic-running || true'"
                 
-                // Spin up the finalized production-ready application layer container mapped onto port 8082
-                powershell "wsl --user asus1234 docker run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+                // Deploys your multi-stage container build hands-free onto port 8082
+                bat "wsl --user asus1234 docker run -d -p 8082:8082 --name lendlogic-running ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
             }
         }
     }
